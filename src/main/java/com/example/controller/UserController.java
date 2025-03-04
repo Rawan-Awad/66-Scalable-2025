@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import com.example.model.Order;
 import com.example.model.User;
 import com.example.service.UserService;
 import org.springframework.web.bind.annotation.*;
