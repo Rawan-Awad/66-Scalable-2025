@@ -18,22 +18,51 @@ public class OrderService extends MainService<Order> {
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
-
     public void addOrder(Order order) {
-        // Implementation to be provided
+        // Validate the order before adding
+        if (order.getUserId() == null) {
+            throw new IllegalArgumentException("Order must have a user ID");
+        }
+        
+        // If products exist, calculate the total price
+        if (order.getProducts() != null && !order.getProducts().isEmpty()) {
+            double totalPrice = order.getProducts().stream()
+                    .mapToDouble(product -> product.getPrice())
+                    .sum();
+            order.setTotalPrice(totalPrice);
+        }
+        
+        orderRepository.addOrder(order);
     }
 
     public ArrayList<Order> getOrders() {
-        // Implementation to be provided
-        return null;
+        return orderRepository.getOrders();
     }
 
     public Order getOrderById(UUID orderId) {
-        // Implementation to be provided
-        return null;
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
+        
+        Order order = orderRepository.getOrderById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("Order not found with ID: " + orderId);
+        }
+        
+        return order;
     }
 
+
     public void deleteOrderById(UUID orderId) throws IllegalArgumentException {
-        // Implementation to be provided
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
+        
+        Order order = orderRepository.getOrderById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("Order not found with ID: " + orderId);
+        }
+        
+        orderRepository.deleteOrderById(orderId);
     }
 }
