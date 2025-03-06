@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import com.example.model.User;
+import com.example.models.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -36,11 +37,14 @@ public class UserRepository extends MainRepository<User> {
         return findAll().stream()
                 .filter(user -> user.getId().equals(userId))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
     }
 
     // Add a new user
     public User addUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         save(user);
         return user;
     }
@@ -48,37 +52,59 @@ public class UserRepository extends MainRepository<User> {
     // Get orders by user ID
     public List<Order> getOrdersByUserId(UUID userId) {
         User user = getUserById(userId);
-        return (user != null) ? user.getOrders() : new ArrayList<>();
+        if (user.getOrders().isEmpty()) {
+            throw new RuntimeException("No orders found for user with ID: " + userId);
+        }
+        return user.getOrders();
     }
 
     // Add order to user
     public void addOrderToUser(UUID userId, Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
         ArrayList<User> users = findAll();
+        boolean userFound = false;
         for (User user : users) {
             if (user.getId().equals(userId)) {
                 user.getOrders().add(order);
                 saveAll(users);
-                return;
+                userFound = true;
+                break;
             }
+        }
+        if (!userFound) {
+            throw new RuntimeException("User not found with ID: " + userId);
         }
     }
 
     // Remove order from user
     public void removeOrderFromUser(UUID userId, UUID orderId) {
         ArrayList<User> users = findAll();
+        boolean userFound = false;
         for (User user : users) {
             if (user.getId().equals(userId)) {
-                user.getOrders().removeIf(order -> order.getId().equals(orderId));
+                boolean removed = user.getOrders().removeIf(order -> order.getId().equals(orderId));
+                if (!removed) {
+                    throw new RuntimeException("Order not found with ID: " + orderId);
+                }
                 saveAll(users);
-                return;
+                userFound = true;
+                break;
             }
+        }
+        if (!userFound) {
+            throw new RuntimeException("User not found with ID: " + userId);
         }
     }
 
     // Delete user by ID
     public void deleteUserById(UUID userId) {
         ArrayList<User> users = findAll();
-        users.removeIf(user -> user.getId().equals(userId));
+        boolean removed = users.removeIf(user -> user.getId().equals(userId));
+        if (!removed) {
+            throw new RuntimeException("User not found with ID: " + userId);
+        }
         saveAll(users);
     }
 }

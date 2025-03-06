@@ -1,7 +1,6 @@
-package com.example.model;
-import com.example.models.Order;
-import org.springframework.stereotype.Component;
+package com.example.models;
 
+import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,17 +9,19 @@ import java.util.UUID;
 public class User {
     private UUID id;
     private String name;
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
+    // Default constructor
     public User() {
-
     }
 
-    public User(String name, List<Order> orders) {
+    // Constructor with id and name
+    public User(UUID id, String name) {
+        this.id = id;
         this.name = name;
-        this.orders = orders;
     }
 
+    // Constructor with all fields
     public User(UUID id, String name, List<Order> orders) {
         this.id = id;
         this.name = name;
@@ -52,4 +53,3 @@ public class User {
         this.orders = orders;
     }
 }
-
