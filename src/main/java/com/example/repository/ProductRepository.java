@@ -1,7 +1,7 @@
 package com.example.repository;
 
 import org.springframework.stereotype.Repository;
-import com.example.models.Product;
+import com.example.model.Product;
 import java.util.ArrayList;
 import java.util.UUID;
 

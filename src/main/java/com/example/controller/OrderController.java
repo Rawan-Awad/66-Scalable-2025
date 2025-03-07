@@ -1,9 +1,9 @@
-package com.example.controllers;
+package com.example.controller;
 
+import com.example.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.models.Order;
 import com.example.service.OrderService;
 
 import java.util.ArrayList;

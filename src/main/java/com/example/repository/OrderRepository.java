@@ -1,11 +1,9 @@
 package com.example.repository;
 
 
+import com.example.model.Order;
 import org.springframework.stereotype.Repository;
 
-import com.example.models.Order;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

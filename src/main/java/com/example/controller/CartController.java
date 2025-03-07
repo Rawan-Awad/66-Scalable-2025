@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/cart")
-public class cartController {
+public class CartController {
 
     private CartService cartService;
 
@@ -20,7 +20,7 @@ public class cartController {
         this.cartService = cartService;
     }
 
-    public cartController(CartService cartService) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
     }
 

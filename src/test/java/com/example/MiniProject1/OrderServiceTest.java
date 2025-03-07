@@ -3,19 +3,18 @@ package com.example.MiniProject1;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.model.Order;
+import com.example.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.example.models.Order;
-import com.example.models.Product;
 import com.example.repository.OrderRepository;
 import com.example.service.OrderService;
 

@@ -1,9 +1,9 @@
 package com.example.service;
 
+import com.example.model.Order;
 import com.example.model.User;
-import com.example.models.Cart;
-import com.example.models.Order;
-import com.example.models.Product;
+import com.example.model.Cart;
+import com.example.model.Product;
 import com.example.repository.OrderRepository;
 import com.example.repository.UserRepository;
 import org.springframework.stereotype.Service;

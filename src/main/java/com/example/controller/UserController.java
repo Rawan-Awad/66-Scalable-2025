@@ -1,8 +1,8 @@
 package com.example.controller;
 
+import com.example.model.Order;
+import com.example.model.Product;
 import com.example.model.User;
-import com.example.models.Order;
-import com.example.models.Product;
 import com.example.service.UserService;
 import com.example.service.CartService;
 import org.springframework.web.bind.annotation.*;

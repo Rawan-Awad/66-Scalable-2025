@@ -1,7 +1,7 @@
 package com.example.repository;
 
+import com.example.model.Order;
 import com.example.model.User;
-import com.example.models.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

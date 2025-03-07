@@ -1,8 +1,6 @@
 package com.example.model;
-import com.example.models.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
