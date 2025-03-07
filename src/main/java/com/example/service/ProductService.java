@@ -2,10 +2,8 @@ package com.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.models.Product;
 import com.example.repository.ProductRepository;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -13,37 +11,45 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class ProductService extends MainService<Product> {
     private final ProductRepository productRepository;
+    private final Product product;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, Product product) {
         this.productRepository = productRepository;
+        this.product = product;
     }
 
     public Product addProduct(Product product) {
-        // Implementation to be provided
-        return null;
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+        return productRepository.addProduct(product);
+
     }
 
     public ArrayList<Product> getProducts() {
-        // Implementation to be provided
-        return null;
+        ArrayList<Product> products = productRepository.getProducts();
+        if (products.isEmpty()) {
+            throw new RuntimeException("No users found");
+        }
+        return products;
+
     }
 
     public Product getProductById(UUID productId) {
-        // Implementation to be provided
-        return null;
+        return productRepository.getProductById(productId);
+
     }
 
     public Product updateProduct(UUID productId, String newName, double newPrice) {
-        // Implementation to be provided
-        return null;
+        return productRepository.updateProduct( productId, newName, newPrice);
     }
 
     public void applyDiscount(double discount, ArrayList<UUID> productIds) {
-        // Implementation to be provided
+        productRepository.applyDiscount(discount, productIds);
     }
 
     public void deleteProductById(UUID productId) {
-        // Implementation to be provided
+        productRepository.deleteProductById(productId);
     }
 }
