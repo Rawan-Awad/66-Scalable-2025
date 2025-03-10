@@ -2,8 +2,11 @@ package com.example.controller;
 
 import com.example.model.Cart;
 import com.example.model.Product;
+import com.example.model.User;
+import com.example.repository.UserRepository;
+import com.example.repository.CartRepository;
+import com.example.repository.ProductRepository;
 import com.example.service.CartService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -13,47 +16,60 @@ import java.util.UUID;
 @RequestMapping("/cart")
 public class CartController {
 
-    private CartService cartService;
+    private final CartService cartService;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
 
-    @Autowired
-    public void CartController(CartService cartService) {
+    // ✅ Constructor-based Dependency Injection
+    public CartController(CartService cartService, UserRepository userRepository,
+                          ProductRepository productRepository, CartRepository cartRepository) {
         this.cartService = cartService;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.cartRepository = cartRepository;
     }
 
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
-
+    // ✅ Add a new cart
     @PostMapping("/")
-    public Cart addCart(@RequestParam UUID userId) {
-        return cartService.addCart(userId);
+    public Cart addCart(@RequestBody Cart cart) {
+        return cartService.addCart(cart);
     }
 
+    // ✅ Get all carts
     @GetMapping("/")
     public ArrayList<Cart> getCarts() {
         return cartService.getCarts();
     }
 
+    // ✅ Get a specific cart by ID
     @GetMapping("/{cartId}")
     public Cart getCartById(@PathVariable UUID cartId) {
         return cartService.getCartById(cartId);
     }
 
-    @PutMapping("/addProduct/{cartId}")
-    public String addProductToCart(@PathVariable UUID cartId, @RequestBody Product product) {
-        cartService.addProductToCart(cartId, product);
-        return "Product added to cart successfully.";
+    @PutMapping("/addProductToCart")
+    public String addProductToCart(@RequestParam UUID cartId, @RequestParam UUID productId) {
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            return "Error: Product not found!"; // ✅ Handles product existence check
+        }
+
+        try {
+            cartService.addProductToCart(cartId, product);
+            return "Product added to cart"; // ✅ Matches test expectation
+        } catch (IllegalArgumentException e) {
+            return e.getMessage(); // ✅ Handles "Error: Cart not found!"
+        }
     }
 
-    @PutMapping("/deleteProduct/{cartId}")
-    public String deleteProductFromCart(@PathVariable UUID cartId, @RequestBody Product product) {
-        cartService.deleteProductFromCart(cartId, product);
-        return "Product removed from cart successfully.";
-    }
 
+
+
+    // ✅ Delete a cart by ID
     @DeleteMapping("/delete/{cartId}")
     public String deleteCartById(@PathVariable UUID cartId) {
         cartService.deleteCartById(cartId);
-        return "Cart deleted successfully.";
+        return "Cart deleted successfully";
     }
 }

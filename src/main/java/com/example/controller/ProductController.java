@@ -36,20 +36,56 @@ public class ProductController {
     }
 
     @PutMapping("/update/{productId}")
-    public Product updateProduct(@PathVariable UUID productId, @RequestBody Map<String, Object> body) {
-        String newName = (String) body.get("name");
-        double newPrice = Double.parseDouble(body.get("price").toString());
-        return productService.updateProduct(productId,newName,newPrice);
+    public Product updateProduct(@PathVariable UUID productId, @RequestBody(required = false) Map<String, Object> body) {
+        // ✅ Ensure the request body is not null
+        if (body == null) {
+            System.out.println("Error: Empty request body received.");
+            return null;
+        }
+
+        // ✅ Use "newName" and "newPrice" instead of "name" and "price"
+        if (!body.containsKey("newName") || !body.containsKey("newPrice")) {
+            System.out.println("Error: Missing required fields (newName, newPrice)");
+            return null;
+        }
+
+        // ✅ Convert safely
+        String newName = body.get("newName").toString();
+        double newPrice;
+
+        try {
+            newPrice = Double.parseDouble(body.get("newPrice").toString());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid price format");
+            return null;
+        }
+
+        // ✅ Call the service to update the product
+        return productService.updateProduct(productId, newName, newPrice);
     }
 
+
+
+
+
     @PutMapping("/applyDiscount")
-    public void applyDiscount(@RequestParam double discount,@RequestBody ArrayList<UUID> productIds){
-        productService.applyDiscount(discount,productIds);
+    public String applyDiscount(@RequestParam double discount, @RequestBody ArrayList<UUID> productIds) {
+        try {
+            productService.applyDiscount(discount, productIds);
+            return "Discount applied successfully";
+        } catch (IllegalArgumentException e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
     @DeleteMapping("/delete/{productId}")
-    public void deleteProductById(@PathVariable UUID productId) {
-        productService.deleteProductById(productId);
+    public String deleteProductById(@PathVariable UUID productId) {
+        try {
+            productService.deleteProductById(productId);
+            return "Product deleted successfully";
+        } catch (IllegalArgumentException e) {
+            return "Error: " + e.getMessage();
+        }
     }
-
 }
+

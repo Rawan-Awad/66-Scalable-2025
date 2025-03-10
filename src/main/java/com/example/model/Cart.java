@@ -1,38 +1,72 @@
 package com.example.model;
 
+import com.example.model.Product;
 import org.springframework.stereotype.Component;
-
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class Cart {
+
     private UUID id;
     private UUID userId;
-    private List<Product> products = new ArrayList<>();
+    private List<Product> products  = new ArrayList<>();
 
-    // Constructors
-    public Cart() {} // Default constructor
-
-    public Cart(UUID userId) { // Constructor for creating a cart for a user
+    // Default Constructor
+    public Cart() {
         this.id = UUID.randomUUID();
-        this.userId = userId;
+        this.products = new ArrayList<>();
     }
 
-    public Cart(UUID id, UUID userId, List<Product> products) { // Constructor for fully initializing a cart
+    // Constructor with only userId
+    public Cart(UUID userId) {
+        this.id = UUID.randomUUID();
+        this.userId = userId;
+        this.products = new ArrayList<>();
+    }
+
+    // Constructor with all attributes
+    public Cart(UUID id, UUID userId, List<Product> products) {
         this.id = id;
         this.userId = userId;
-        this.products = products;
+        this.products = products != null ? products : new ArrayList<>();
     }
 
     // Getters and Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public UUID getId() {
+        return id;
+    }
 
-    public UUID getUserId() { return userId; }
-    public void setUserId(UUID userId) { this.userId = userId; }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-    public List<Product> getProducts() { return products; }
-    public void setProducts(List<Product> products) { this.products = products; }
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = (products != null) ? products : new ArrayList<>(); // ✅ Avoids null pointer
+    }
+
+    // Utility method to add a product to the cart
+    public void addProduct(Product product) {
+        if (product != null) {
+            this.products.add(product);
+        }
+    }
+
+    // Utility method to remove a product from the cart
+    public void removeProduct(Product product) {
+        this.products.remove(product);
+    }
 }

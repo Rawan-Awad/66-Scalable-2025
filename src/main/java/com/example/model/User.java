@@ -1,6 +1,7 @@
 package com.example.model;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,21 +12,22 @@ public class User {
     private List<Order> orders;
 
     public User() {
-
+        this.id = UUID.randomUUID();
+        this.orders = new ArrayList<>();
     }
 
     public User(String name, List<Order> orders) {
+        this.id = UUID.randomUUID();
         this.name = name;
-        this.orders = orders;
+        this.orders = (orders != null) ? orders : new ArrayList<>();
     }
 
     public User(UUID id, String name, List<Order> orders) {
         this.id = id;
         this.name = name;
-        this.orders = orders;
+        this.orders = (orders != null) ? orders : new ArrayList<>();
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -43,11 +45,17 @@ public class User {
     }
 
     public List<Order> getOrders() {
+        if (orders == null) {
+            orders = new ArrayList<>();
+        }
         return orders;
     }
 
     public void setOrders(List<Order> orders) {
-        this.orders = orders;
+        this.orders = (orders != null) ? orders : new ArrayList<>();
+    }
+
+    public void addOrder(Order order) {
+        getOrders().add(order);
     }
 }
-
