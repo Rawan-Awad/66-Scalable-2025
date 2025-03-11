@@ -92,9 +92,13 @@ class ServiceTests {
         when(productRepository.getProductById(productId)).thenReturn(product);
         assertEquals(product, productService.getProductById(productId));
     }
-    @Test void testGetProductById_NotFound() {
+    @Test
+    void testGetProductById_NotFound() {
         when(productRepository.getProductById(productId)).thenReturn(null);
-        assertNull(productService.getProductById(productId));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.getProductById(productId);
+        });
+        assertEquals("Product not found", exception.getMessage());
     }
     @Test void testGetProductById_NullId() {
         assertThrows(IllegalArgumentException.class, () -> productService.getProductById(null));
@@ -129,14 +133,22 @@ class ServiceTests {
         productService.getProducts();
         verify(productRepository, times(1)).getProducts();
     }
-    @Test void testUpdateProduct_Success() {
-        productService.addProduct(product);
-        when(productRepository.updateProduct(productId,"hello",20)).thenReturn(product);
-        assertEquals(product, productService.getProductById(productId));
+    @Test
+    void testUpdateProduct_Success() {
+        when(productRepository.getProductById(productId)).thenReturn(product);
+        Product updatedProduct = new Product(productId, "hello", 20);
+        when(productRepository.updateProduct(productId, "hello", 20)).thenReturn(updatedProduct);
+        Product result = productService.updateProduct(productId, "hello", 20);
+        assertEquals(updatedProduct, result);
     }
-    @Test void testUpdateProduct_ExistingProduct() {
-        when(productRepository.updateProduct(productId,"hello",20)).thenReturn(product);
-        assertNull(productService.getProductById(productId));
+
+    @Test
+    void testUpdateProduct_NotFound() {
+        when(productRepository.updateProduct(productId, "hello", 20)).thenReturn(null);
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProduct(productId, "hello", 20);
+        });
+        assertEquals("Product not found", exception.getMessage());
     }
     @Test void testUpdateProduct_NullId() {
         assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(null,null,0));
