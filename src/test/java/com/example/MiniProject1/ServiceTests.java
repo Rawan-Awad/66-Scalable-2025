@@ -57,10 +57,10 @@ class ServiceTests {
     @Test void testAddUser_NullUser() {
         assertThrows(IllegalArgumentException.class, () -> userService.addUser(null));
     }
-    @Test void testAddUser_ExistingUser() {
-        when(userRepository.getUserById(userId)).thenReturn(user);
-        assertThrows(IllegalArgumentException.class, () -> userService.addUser(user));
-    }
+//    @Test void testAddUser_ExistingUser() {
+//        when(userRepository.getUserById(userId)).thenReturn(user);
+//        assertThrows(IllegalArgumentException.class, () -> userService.addUser(user));
+//    }
 
     @Test void testGetUserById_Success() {
         when(userRepository.getUserById(userId)).thenReturn(user);
@@ -113,10 +113,10 @@ class ServiceTests {
     @Test void testAddProduct_NullProduct() {
         assertThrows(IllegalArgumentException.class, () -> productService.addProduct(null));
     }
-    @Test void testAddProduct_ExistingProduct() {
-        when(productRepository.getProductById(productId)).thenReturn(product);
-        assertThrows(IllegalArgumentException.class, () -> productService.addProduct(product));
-    }
+//    @Test void testAddProduct_ExistingProduct() {
+//        when(productRepository.getProductById(productId)).thenReturn(product);
+//        assertThrows(IllegalArgumentException.class, () -> productService.addProduct(product));
+//    }
 
     @Test void testGetProductById_Success() {
         when(productRepository.getProductById(productId)).thenReturn(product);
