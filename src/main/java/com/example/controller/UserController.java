@@ -4,6 +4,8 @@ import com.example.model.Cart;
 import com.example.model.Order;
 import com.example.model.Product;
 import com.example.model.User;
+import com.example.repository.CartRepository;
+import com.example.repository.ProductRepository;
 import com.example.service.OrderService;
 import com.example.service.ProductService;
 import com.example.service.UserService;
@@ -22,12 +24,16 @@ public class UserController {
     private final CartService cartService;
     //private final OrderService orderService;
     private final ProductService productService;
+    private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
 
     @Autowired
-    public UserController(UserService userService, CartService cartService, ProductService productService) {
+    public UserController(UserService userService, CartService cartService, ProductService productService, ProductRepository productRepository, CartRepository cartRepository) {
         this.userService = userService;
         this.cartService = cartService;
         this.productService = productService;
+        this.productRepository = productRepository;
+        this.cartRepository = cartRepository;
     }
 
     @PostMapping("/")
@@ -81,27 +87,40 @@ public class UserController {
     }
 
     @PutMapping("/addProductToCart")
-    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId) {  // ✅ Accept UUID instead of Product
-        Product product = productService.getProductById(productId);  // ✅ Fetch Product from DB
+    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId) {
+        Product product = productRepository.getProductById(productId);
         if (product == null) {
-            throw new RuntimeException("Product not found with ID: " + productId);
+            throw new IllegalArgumentException("Product not found");
         }
-        cartService.addProductToCart(userId, product);  // ✅ Now we pass a valid Product object
+
+        Cart cart = cartService.getCartByUserId(userId);
+        if (cart == null) {
+            cart = new Cart(UUID.randomUUID(), userId, new ArrayList<>());
+            cartService.addCart(cart);
+        }
+
+        cartService.addProductToCart(cart.getId(), product);
         return "Product added to cart";
     }
 
 
     @PutMapping("/deleteProductFromCart")
     public String deleteProductFromCart(@RequestParam UUID userId, @RequestParam UUID productId) {
-        Product product = productService.getProductById(productId);  // ✅ Fetch Product from DB
+        Product product = productRepository.getProductById(productId);
         if (product == null) {
-            throw new RuntimeException("Product not found with ID: " + productId);
+            throw new IllegalArgumentException("Product not found");
         }
-
-        cartService.deleteProductFromCart(userId, product);  // ✅ Now use correct cartId
-        return "Product deleted from cart";
+        Cart cart = cartRepository.getCartByUserId(userId);
+        if (cart == null) {
+            return "Cart is empty";
+        }
+        try {
+            cartService.deleteProductFromCart(cart.getId(), product);
+            return "Product deleted from cart";
+        } catch (IllegalStateException e) {
+            return "Cart is empty";
+        }
     }
-
 
     @DeleteMapping("/delete/{userId}")
     public String deleteUserById(@PathVariable UUID userId) {

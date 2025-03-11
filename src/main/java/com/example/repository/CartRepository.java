@@ -22,12 +22,12 @@ public class CartRepository extends MainRepository<Cart> {
 
     // Add a new cart
     public Cart addCart(Cart cart) {
-        if (cart == null) {
-            throw new IllegalArgumentException("Cannot add a null cart");
-        }
+        System.out.println("➡️ [CartRepository] Saving cart: " + cart.getId());
         save(cart);
+        System.out.println("✅ [CartRepository] Cart saved.");
         return cart;
     }
+
 
 
     // Get all carts
@@ -64,15 +64,26 @@ public class CartRepository extends MainRepository<Cart> {
         throw new RuntimeException("Cart not found");
     }
 
+    public void deleteProductFromCart(UUID cartId, Product product) {
+        ArrayList<Cart> carts = findAll(); // Load all carts
+        for (Cart cart : carts) {
+            if (cart.getId().equals(cartId)) {
+                cart.removeProduct(product);
+                saveAll(carts); // ✅ Save updated list of carts
+                return;
+            }
+        }
+        throw new RuntimeException("Cart not found");
+    }
 
     // Delete a product from the cart
-    public void deleteProductFromCart(UUID cartId, Product product) {
-        Cart cart = getCartById(cartId);
-        if (cart != null) {
-            cart.removeProduct(product);
-            saveAll(getCarts()); // Save updated list
-        }
-    }
+//    public void deleteProductFromCart(UUID cartId, Product product) {
+//        Cart cart = getCartById(cartId);
+//        if (cart != null) {
+//            cart.removeProduct(product);
+//            saveAll(getCarts()); // Save updated list
+//        }
+//    }
 
     // Delete a cart by ID
     public void deleteCartById(UUID cartId) {

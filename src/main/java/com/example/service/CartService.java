@@ -3,7 +3,10 @@ package com.example.service;
 
 import com.example.model.Cart;
 import com.example.model.Product;
+import com.example.model.User;
 import com.example.repository.CartRepository;
+import com.example.repository.ProductRepository;
+import com.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,10 +16,14 @@ import java.util.UUID;
 public class CartService extends MainService<Cart> {
 
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     // Constructor for Dependency Injection
-    public CartService(CartRepository cartRepository) {
+    public CartService(CartRepository cartRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     // Add a new cart
@@ -39,93 +46,42 @@ public class CartService extends MainService<Cart> {
         return cartRepository.getCartByUserId(userId);
     }
 
+
     public void addProductToCart(UUID cartId, Product product) {
         Cart cart = cartRepository.getCartById(cartId);
+        ArrayList<User> users = userRepository.getUsers();
 
-        if (cart == null) {
-            // ✅ Ensure the cart is properly created and saved
-            cart = new Cart(cartId, UUID.randomUUID(), new ArrayList<>());
-            cartRepository.addCart(cart);
+        UUID userId = null;
 
-            // ✅ Force repository persistence before retrieval
-            cartRepository.saveAll(cartRepository.getCarts());
-
-            // 🔹 Debugging Step: Check if cart is actually saved
-            Cart savedCart = cartRepository.getCartById(cartId);
-            if (savedCart == null) {
-                throw new RuntimeException("Cart was created but not retrievable! Repository save issue.");
+        // Find the user who owns this cart
+        for (User user : users) {
+            if (cartRepository.getCartByUserId(user.getId()) != null
+                    && cartRepository.getCartByUserId(user.getId()).getId().equals(cartId)) {
+                userId = user.getId();
+                break;
             }
         }
 
-        cart.addProduct(product);
-        cartRepository.addProductToCart(cartId, product);
+        if (cart == null) {
+            if (userId == null) {
+                throw new IllegalArgumentException("No user found for this cart ID");
+            }
+            // Create a new cart for the user
+            cart = new Cart(cartId, userId, new ArrayList<>());
+            cartRepository.addCart(cart);
+        }
+
+        cartRepository.addProductToCart(cart.getId(), product);
     }
-
-
 
 
     public void deleteProductFromCart(UUID cartId, Product product) {
-        Cart cart = cartRepository.getCartById(cartId);  // ✅ Fetch cart using cartId
-
+        Cart cart = cartRepository.getCartById(cartId);
         if (cart == null) {
-            throw new RuntimeException("Cart not found with ID: " + cartId);
+            throw new IllegalArgumentException("Cart not found");
         }
-
-        cart.addProduct(product);
-        cartRepository.deleteProductFromCart(cartId, product);  // ✅ Use cartId directly
+        cartRepository.deleteProductFromCart(cartId, product);
     }
-
-//    public void deleteProductFromCart(UUID cartId, Product product) {
-//        Cart cart = cartRepository.getCartById(cartId);
-//
-////        if (cart == null) {
-////            // ✅ Automatically create a cart if it doesn't exist
-////            cart = new Cart(cartId);
-////            cartRepository.addCart(cart);
-////        }
-//
-//        cart.addProduct(product);
-//        cartRepository.deleteProductFromCart(cart.getId(), product);
-//    }
-
-//    public void addProductToCart(UUID cartId, Product product) {
-//        Cart cart = cartRepository.getCartById(cartId); // ✅ Get cart using cartId
-//
-//        if (cart == null) {
-//            throw new IllegalArgumentException("Error: Cart not found!"); // ✅ Controller will catch this
-//        }
-//
-//        if (cart.getProducts() == null) {
-//            cart.setProducts(new ArrayList<>()); // ✅ Ensures list is initialized
-//        }
-//
-//        cart.addProduct(product);
-//        cartRepository.saveAll(cartRepository.getCarts()); // ✅ Save cart update
-//    }
-
-//    public void deleteProductFromCart(UUID cartId, UUID productId) {
-//        Cart cart = cartRepository.getCartById(cartId); // ✅ Get cart using cartId
-//
-//        if (cart == null) {
-//            throw new IllegalArgumentException("Cart is empty"); // ✅ Controller will catch this
-//        }
-//
-//        if (cart.getProducts() == null || cart.getProducts().isEmpty()) {
-//            throw new IllegalArgumentException("Cart is empty"); // ✅ Controller will handle this
-//        }
-//
-//        Product productToRemove = cart.getProducts().stream()
-//                .filter(p -> p.getId().equals(productId))
-//                .findFirst()
-//                .orElse(null);
-//
-//        if (productToRemove == null) {
-//            throw new IllegalArgumentException("Error: Product not found in cart!"); // ✅ Controller will handle this
-//        }
-//
-//        cart.removeProduct(productToRemove);
-//        cartRepository.saveAll(cartRepository.getCarts()); // ✅ Save cart update
-//    }
 
 
 
