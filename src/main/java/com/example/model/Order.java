@@ -12,17 +12,14 @@ public class Order {
     private double totalPrice;
     private List<Product> products = new ArrayList<>();
 
-    // Default constructor
     public Order() {
     }
 
-    // Constructor with id and userId
     public Order(UUID id, UUID userId) {
         this.id = id;
         this.userId = userId;
     }
 
-    // Constructor with all fields
     public Order(UUID id, UUID userId, double totalPrice, List<Product> products) {
         this.id = id;
         this.userId = userId;
@@ -30,7 +27,6 @@ public class Order {
         this.products = products;
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }

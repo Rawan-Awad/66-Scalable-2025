@@ -27,12 +27,10 @@ public class UserRepository extends MainRepository<User> {
         return User[].class;
     }
 
-    // Get all users
     public ArrayList<User> getUsers() {
         return findAll();
     }
 
-    // Get user by ID
     public User getUserById(UUID userId) {
         return findAll().stream()
                 .filter(user -> user.getId().equals(userId))
@@ -40,7 +38,6 @@ public class UserRepository extends MainRepository<User> {
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
     }
 
-    // Add a new user
     public User addUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
@@ -49,7 +46,6 @@ public class UserRepository extends MainRepository<User> {
         return user;
     }
 
-    // Get orders by user ID
     public List<Order> getOrdersByUserId(UUID userId) {
         User user = getUserById(userId);
         if (user.getOrders().isEmpty()) {
@@ -58,7 +54,6 @@ public class UserRepository extends MainRepository<User> {
         return user.getOrders();
     }
 
-    // Add order to user
     public void addOrderToUser(UUID userId, Order order) {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null");
@@ -78,7 +73,6 @@ public class UserRepository extends MainRepository<User> {
         }
     }
 
-    // Remove order from user
     public void removeOrderFromUser(UUID userId, UUID orderId) {
         ArrayList<User> users = findAll();
         boolean userFound = false;
@@ -98,7 +92,6 @@ public class UserRepository extends MainRepository<User> {
         }
     }
 
-    // Delete user by ID
     public void deleteUserById(UUID userId) {
         ArrayList<User> users = findAll();
         boolean removed = users.removeIf(user -> user.getId().equals(userId));

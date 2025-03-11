@@ -19,12 +19,10 @@ public class OrderService extends MainService<Order> {
         this.orderRepository = orderRepository;
     }
     public void addOrder(Order order) {
-        // Validate the order before adding
         if (order.getUserId() == null) {
             throw new IllegalArgumentException("Order must have a user ID");
         }
         
-        // If products exist, calculate the total price
         if (order.getProducts() != null && !order.getProducts().isEmpty()) {
             double totalPrice = order.getProducts().stream()
                     .mapToDouble(product -> product.getPrice())

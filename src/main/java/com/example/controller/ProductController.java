@@ -37,19 +37,16 @@ public class ProductController {
 
     @PutMapping("/update/{productId}")
     public Product updateProduct(@PathVariable UUID productId, @RequestBody(required = false) Map<String, Object> body) {
-        // ✅ Ensure the request body is not null
         if (body == null) {
             System.out.println("Error: Empty request body received.");
             return null;
         }
 
-        // ✅ Use "newName" and "newPrice" instead of "name" and "price"
         if (!body.containsKey("newName") || !body.containsKey("newPrice")) {
             System.out.println("Error: Missing required fields (newName, newPrice)");
             return null;
         }
 
-        // ✅ Convert safely
         String newName = body.get("newName").toString();
         double newPrice;
 
@@ -60,7 +57,6 @@ public class ProductController {
             return null;
         }
 
-        // ✅ Call the service to update the product
         return productService.updateProduct(productId, newName, newPrice);
     }
 

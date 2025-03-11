@@ -21,12 +21,12 @@ public class OrderRepository extends MainRepository<Order> {
 
     // Add a new order
     public void addOrder(Order order) {
-        save(order); // Using save() from MainRepository
+        save(order);
     }
 
     // Get all orders
     public ArrayList<Order> getOrders() {
-        return findAll(); // Using findAll() from MainRepository
+        return findAll();
     }
 
     // Get a specific order by ID
@@ -41,6 +41,6 @@ public class OrderRepository extends MainRepository<Order> {
     public void deleteOrderById(UUID orderId) {
         ArrayList<Order> orders = getOrders();
         orders.removeIf(order -> order.getId().equals(orderId));
-        saveAll(orders); // Save updated order list
+        saveAll(orders);
     }
 }

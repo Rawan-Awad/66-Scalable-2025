@@ -23,7 +23,6 @@ public class CartController {
     private final CartRepository cartRepository;
     private final ProductService productService;
 
-    // ✅ Constructor-based Dependency Injection
     public CartController(CartService cartService, UserRepository userRepository,
                           ProductRepository productRepository, CartRepository cartRepository, ProductService productService) {
         this.cartService = cartService;
@@ -33,19 +32,16 @@ public class CartController {
         this.productService = productService;
     }
 
-    // ✅ Add a new cart
     @PostMapping("/")
     public Cart addCart(@RequestBody Cart cart) {
         return cartService.addCart(cart);
     }
 
-    // ✅ Get all carts
     @GetMapping("/")
     public ArrayList<Cart> getCarts() {
         return cartService.getCarts();
     }
 
-    // ✅ Get a specific cart by ID
     @GetMapping("/{cartId}")
     public Cart getCartById(@PathVariable UUID cartId) {
         return cartService.getCartById(cartId);
@@ -68,7 +64,6 @@ public class CartController {
 
 
 
-    // ✅ Delete a cart by ID
     @DeleteMapping("/delete/{cartId}")
     public String deleteCartById(@PathVariable UUID cartId) {
         cartService.deleteCartById(cartId);

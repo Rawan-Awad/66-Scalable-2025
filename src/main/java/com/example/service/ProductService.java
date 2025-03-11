@@ -23,11 +23,6 @@ public class ProductService extends MainService<Product> {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
-
-//        if(productRepository.getProductById(product.getId())!=null) {
-//            throw new IllegalArgumentException("Product already exists");
-//        }
-
         return productRepository.addProduct(product);
 
     }

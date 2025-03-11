@@ -12,7 +12,7 @@ public class CartRepository extends MainRepository<Cart> {
 
     @Override
     protected String getDataPath() {
-        return "src/main/java/com/example/data/carts.json"; // Path to the JSON file
+        return "src/main/java/com/example/data/carts.json";
     }
 
     @Override
@@ -32,7 +32,7 @@ public class CartRepository extends MainRepository<Cart> {
 
     // Get all carts
     public ArrayList<Cart> getCarts() {
-        return findAll(); // Using findAll() from MainRepository
+        return findAll();
     }
 
     // Get a cart by ID
@@ -53,11 +53,11 @@ public class CartRepository extends MainRepository<Cart> {
 
 
     public void addProductToCart(UUID cartId, Product product) {
-        ArrayList<Cart> carts = findAll(); // Load all carts
+        ArrayList<Cart> carts = findAll();
         for (Cart cart : carts) {
             if (cart.getId().equals(cartId)) {
                 cart.addProduct(product);
-                saveAll(carts); // ✅ Save updated list of carts
+                saveAll(carts);
                 return;
             }
         }
@@ -65,11 +65,11 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public void deleteProductFromCart(UUID cartId, Product product) {
-        ArrayList<Cart> carts = findAll(); // Load all carts
+        ArrayList<Cart> carts = findAll();
         for (Cart cart : carts) {
             if (cart.getId().equals(cartId)) {
                 cart.removeProduct(product);
-                saveAll(carts); // ✅ Save updated list of carts
+                saveAll(carts);
                 return;
             }
         }
@@ -85,10 +85,9 @@ public class CartRepository extends MainRepository<Cart> {
 //        }
 //    }
 
-    // Delete a cart by ID
     public void deleteCartById(UUID cartId) {
         ArrayList<Cart> carts = getCarts();
         carts.removeIf(cart -> cart.getId().equals(cartId));
-        saveAll(carts); // Save updated list
+        saveAll(carts);
     }
 }

@@ -9,24 +9,20 @@ public class Product {
     private String name;
     private double price;
 
-    // Default constructor
     public Product() {
     }
 
-    // Constructor with id and name
     public Product(UUID id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    // Constructor with all fields
     public Product(UUID id, String name, double price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }

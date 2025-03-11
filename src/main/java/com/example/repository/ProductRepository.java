@@ -23,7 +23,6 @@ public class ProductRepository extends MainRepository<Product> {
         return Product[].class;
     }
 
-    // Get all users
     public ArrayList<Product> getProducts() {
         return findAll();
     }
