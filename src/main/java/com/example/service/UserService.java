@@ -45,6 +45,9 @@ public class UserService extends MainService<User> {
 
     // Get a specific user by ID
     public User getUserById(UUID userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         return userRepository.getUserById(userId);
     }
 
