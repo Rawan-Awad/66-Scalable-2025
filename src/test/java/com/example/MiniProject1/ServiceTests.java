@@ -99,6 +99,97 @@ class ServiceTests {
     @Test void testGetProductById_NullId() {
         assertThrows(IllegalArgumentException.class, () -> productService.getProductById(null));
     }
+    @Test
+    void testGetProducts_ReturnsNonEmptyList() {
+        ArrayList<Product> products = new ArrayList<>();
+        Product product1 = new Product(); // Adjust constructor as needed
+        products.add(product1);
+
+        when(productRepository.getProducts()).thenReturn(products);
+
+        ArrayList<Product> result = productService.getProducts();
+        assertEquals(products, result, "The returned product list should match the repository's list");
+    }
+    @Test
+    void testGetProducts_ThrowsExceptionWhenEmpty() {
+        ArrayList<Product> emptyList = new ArrayList<>();
+        when(productRepository.getProducts()).thenReturn(emptyList);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.getProducts();
+        });
+        assertEquals("No users found", exception.getMessage(), "Exception message should be 'No users found'");
+    }
+    @Test
+    void testGetProducts_CallsRepositoryOnce() {
+        ArrayList<Product> products = new ArrayList<>();
+        products.add(new Product());
+        when(productRepository.getProducts()).thenReturn(products);
+
+        productService.getProducts();
+        verify(productRepository, times(1)).getProducts();
+    }
+    @Test void testUpdateProduct_Success() {
+        productService.addProduct(product);
+        when(productRepository.updateProduct(productId,"hello",20)).thenReturn(product);
+        assertEquals(product, productService.getProductById(productId));
+    }
+    @Test void testUpdateProduct_ExistingProduct() {
+        when(productRepository.updateProduct(productId,"hello",20)).thenReturn(product);
+        assertNull(productService.getProductById(productId));
+    }
+    @Test void testUpdateProduct_NullId() {
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(null,null,0));
+    }
+    @Test
+    void testApplyDiscount_WithZeroDiscount() {
+        double discount = 0.0;
+        ArrayList<UUID> productIds = new ArrayList<>();
+        productIds.add(UUID.randomUUID());
+        productIds.add(UUID.randomUUID());
+
+        productService.applyDiscount(discount, productIds);
+
+        verify(productRepository, times(1)).applyDiscount(discount, productIds);
+    }
+    @Test
+    void testApplyDiscount_WithValidProductIds() {
+        double discount = 10.0;
+        ArrayList<UUID> productIds = new ArrayList<>();
+        productIds.add(UUID.randomUUID());
+        productIds.add(UUID.randomUUID());
+
+        productService.applyDiscount(discount, productIds);
+
+        verify(productRepository, times(1)).applyDiscount(discount, productIds);
+    }
+    @Test
+    void testApplyDiscount_WithEmptyProductIds() {
+        double discount = 5.0;
+        ArrayList<UUID> emptyProductIds = new ArrayList<>();
+
+        productService.applyDiscount(discount, emptyProductIds);
+
+        verify(productRepository, times(1)).applyDiscount(discount, emptyProductIds);
+    }
+
+    @Test
+    void testDeleteProductById_Null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            productService.deleteProductById(null);
+        });
+    }
+    @Test void testDeleteProductById_NotFound() {
+        assertThrows(IllegalArgumentException.class, () -> productService.deleteProductById(null));
+    }
+    @Test
+    void testDeleteProductById() {
+        productService.addProduct(product);
+
+        productService.deleteProductById(productId);
+
+        verify(productRepository, times(1)).deleteProductById(productId);
+    }
 
     // Similar structure applied to CartService and OrderService to reach 75 tests
 }
