@@ -33,7 +33,7 @@ public class ProductService extends MainService<Product> {
     public ArrayList<Product> getProducts() {
         ArrayList<Product> products = productRepository.getProducts();
         if (products.isEmpty()) {
-            throw new IllegalArgumentException("No users found");
+            throw new IllegalArgumentException("No products found");
         }
         return products;
 
