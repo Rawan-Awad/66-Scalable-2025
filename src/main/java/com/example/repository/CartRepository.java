@@ -22,9 +22,13 @@ public class CartRepository extends MainRepository<Cart> {
 
     // Add a new cart
     public Cart addCart(Cart cart) {
-        save(cart); // Using save() from MainRepository
+        if (cart == null) {
+            throw new IllegalArgumentException("Cannot add a null cart");
+        }
+        save(cart);
         return cart;
     }
+
 
     // Get all carts
     public ArrayList<Cart> getCarts() {
@@ -47,14 +51,19 @@ public class CartRepository extends MainRepository<Cart> {
                 .orElse(null);
     }
 
-    // Add a product to the cart
+
     public void addProductToCart(UUID cartId, Product product) {
-        Cart cart = getCartById(cartId);
-        if (cart != null) {
-            cart.addProduct(product);
-            saveAll(getCarts()); // Save updated list
+        ArrayList<Cart> carts = findAll(); // Load all carts
+        for (Cart cart : carts) {
+            if (cart.getId().equals(cartId)) {
+                cart.addProduct(product);
+                saveAll(carts); // ✅ Save updated list of carts
+                return;
+            }
         }
+        throw new RuntimeException("Cart not found");
     }
+
 
     // Delete a product from the cart
     public void deleteProductFromCart(UUID cartId, Product product) {

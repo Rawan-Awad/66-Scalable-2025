@@ -7,6 +7,7 @@ import com.example.repository.UserRepository;
 import com.example.repository.CartRepository;
 import com.example.repository.ProductRepository;
 import com.example.service.CartService;
+import com.example.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,14 +21,16 @@ public class CartController {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final ProductService productService;
 
     // ✅ Constructor-based Dependency Injection
     public CartController(CartService cartService, UserRepository userRepository,
-                          ProductRepository productRepository, CartRepository cartRepository) {
+                          ProductRepository productRepository, CartRepository cartRepository, ProductService productService) {
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
+        this.productService = productService;
     }
 
     // ✅ Add a new cart
@@ -48,18 +51,17 @@ public class CartController {
         return cartService.getCartById(cartId);
     }
 
-    @PutMapping("/addProductToCart")
-    public String addProductToCart(@RequestParam UUID cartId, @RequestParam UUID productId) {
-        Product product = productRepository.getProductById(productId);
+    @PutMapping("/addProduct/{cartId}")
+    public String addProductToCart(@PathVariable UUID cartId, @RequestBody Product product) {
         if (product == null) {
-            return "Error: Product not found!"; // ✅ Handles product existence check
+            return "Error: Product cannot be null";
         }
 
         try {
             cartService.addProductToCart(cartId, product);
-            return "Product added to cart"; // ✅ Matches test expectation
-        } catch (IllegalArgumentException e) {
-            return e.getMessage(); // ✅ Handles "Error: Cart not found!"
+            return "Product added to cart successfully";
+        } catch (RuntimeException e) {
+            return "Error: " + e.getMessage();
         }
     }
 

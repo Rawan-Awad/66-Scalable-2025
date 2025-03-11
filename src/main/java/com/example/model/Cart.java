@@ -15,13 +15,12 @@ public class Cart {
 
     // Default Constructor
     public Cart() {
-        this.id = UUID.randomUUID();
-        this.products = new ArrayList<>();
+//        this.id = UUID.randomUUID();
+//        this.products = new ArrayList<>();
     }
 
-    // Constructor with only userId
-    public Cart(UUID userId) {
-        this.id = UUID.randomUUID();
+    public Cart(UUID userId, List<Product> products) {
+//        this.id = UUID.randomUUID();
         this.userId = userId;
         this.products = new ArrayList<>();
     }
@@ -30,7 +29,8 @@ public class Cart {
     public Cart(UUID id, UUID userId, List<Product> products) {
         this.id = id;
         this.userId = userId;
-        this.products = products != null ? products : new ArrayList<>();
+        this.products = new ArrayList<>();
+//        this.products = products != null ? products : new ArrayList<>();
     }
 
     // Getters and Setters

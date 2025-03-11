@@ -1,8 +1,11 @@
 package com.example.controller;
 
+import com.example.model.Cart;
 import com.example.model.Order;
 import com.example.model.Product;
 import com.example.model.User;
+import com.example.service.OrderService;
+import com.example.service.ProductService;
 import com.example.service.UserService;
 import com.example.service.CartService;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +20,14 @@ public class UserController {
 
     private final UserService userService;
     private final CartService cartService;
+    //private final OrderService orderService;
+    private final ProductService productService;
 
     @Autowired
-    public UserController(UserService userService, CartService cartService) {
+    public UserController(UserService userService, CartService cartService, ProductService productService) {
         this.userService = userService;
         this.cartService = cartService;
+        this.productService = productService;
     }
 
     @PostMapping("/")
@@ -75,24 +81,27 @@ public class UserController {
     }
 
     @PutMapping("/addProductToCart")
-    public String addProductToCart(@RequestParam UUID userId, @RequestParam Product productId) {
-        try {
-            cartService.addProductToCart(userId, productId);
-            return "Product added to cart successfully";
-        } catch (RuntimeException e) {
-            return "Error: " + e.getMessage();
+    public String addProductToCart(@RequestParam UUID userId, @RequestParam UUID productId) {  // ✅ Accept UUID instead of Product
+        Product product = productService.getProductById(productId);  // ✅ Fetch Product from DB
+        if (product == null) {
+            throw new RuntimeException("Product not found with ID: " + productId);
         }
+        cartService.addProductToCart(userId, product);  // ✅ Now we pass a valid Product object
+        return "Product added to cart";
     }
 
+
     @PutMapping("/deleteProductFromCart")
-    public String deleteProductFromCart(@RequestParam UUID cartId, @RequestParam UUID productId) {
-        try {
-            cartService.deleteProductFromCart(cartId, productId);
-            return "Product deleted from cart"; // ✅ Matches test expectation
-        } catch (IllegalArgumentException e) {
-            return e.getMessage(); // ✅ Handles "Cart is empty" or "Product not found in cart"
+    public String deleteProductFromCart(@RequestParam UUID userId, @RequestParam UUID productId) {
+        Product product = productService.getProductById(productId);  // ✅ Fetch Product from DB
+        if (product == null) {
+            throw new RuntimeException("Product not found with ID: " + productId);
         }
+
+        cartService.deleteProductFromCart(userId, product);  // ✅ Now use correct cartId
+        return "Product deleted from cart";
     }
+
 
     @DeleteMapping("/delete/{userId}")
     public String deleteUserById(@PathVariable UUID userId) {
